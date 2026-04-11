@@ -16,6 +16,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
-
+      - name: Setup Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          pip-install: pytest
       - name: Run unit tests
         run: python3 -m pytest .github/scripts/test_update_corretto.py -v
