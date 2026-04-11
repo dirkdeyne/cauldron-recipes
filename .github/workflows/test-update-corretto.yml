@@ -21,4 +21,4 @@ jobs:
         with:
           pip-install: pytest
       - name: Run unit tests
-        run: python3 -m pytest .github/scripts/test_update_corretto.py -v
+        run: python -m pytest .github/scripts/test_update_corretto.py -v
