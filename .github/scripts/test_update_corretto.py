@@ -146,7 +146,9 @@ class TestRun:
     def _fetcher(self, url):
         if "endoflife" in url:
             return FAKE_EOL_RESPONSE
-        return FAKE_RELEASE_HTML
+        if "github.com/corretto" in url:
+            return FAKE_RELEASE_HTML
+        raise Exception(f"Unexpected URL in test: {url}")
 
     def test_returns_one_entry_per_release(self):
         results = run(fetcher=self._fetcher)
