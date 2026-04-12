@@ -14,7 +14,7 @@ import urllib.request
 from html.parser import HTMLParser
 
 EOL_API = "https://endoflife.date/api/v1/products/amazon-corretto"
-OUTPUT = pathlib.Path("main/java/corretto.json")
+OUTPUT = pathlib.Path("java/corretto.json")
 
 
 def fetch(url: str) -> str:
