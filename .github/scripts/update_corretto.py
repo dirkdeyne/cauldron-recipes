@@ -77,10 +77,9 @@ class ReleaseTableParser(HTMLParser):
         p.feed(html)
         return p.result
 
-
 def _parse_checksums(text: str) -> dict:
     """Extract MD5 (32 hex chars) and SHA-256 (64 hex chars) from a checksum cell."""
-    hashes = re.findall(r"[a-fA-F0-9]{32,64}", text)
+    hashes = re.findall(r"[a-fA-F0-9]{32}(?:[a-fA-F0-9]{32})?", text)
     result = {}
     for h in hashes:
         h = h.lower()
@@ -90,29 +89,23 @@ def _parse_checksums(text: str) -> dict:
             result.setdefault("SHA-256", h)
     return result
 
-
-def build_entry(version: str, release: dict) -> dict:
+def build_entry(version: str, release: dict, fetcher=fetch) -> dict:
+    print('Retrieving version: ' + version)
     dl_url = (
         f"https://corretto.aws/downloads/latest/"
         f"amazon-corretto-{version}-x64-windows-jdk.zip"
     )
 
-    gh_url = next(
-        (
-            l["url"]
-            for l in release.get("links", [])
-            if "github.com/corretto" in l.get("url", "")
-            and "/releases/tag/" in l.get("url", "")
-        ),
-        None,
-    )
+    gh_url = release.get("latest", {}).get("link")
 
     if not gh_url:
         print(f"[WARN] No GitHub release link for version {version}")
+        print("release:" + str(release))
+        print("latest:" + release.get("latest", "<No latest found>"))
         return {"version": version, "url": dl_url, "checksums": {}}
 
     try:
-        page = fetch(gh_url)
+        page = fetcher(gh_url)
     except Exception as e:
         print(f"[WARN] Could not fetch {gh_url}: {e}")
         return {"version": version, "url": dl_url, "checksums": {}}
@@ -126,9 +119,9 @@ def build_entry(version: str, release: dict) -> dict:
 
 def run(fetcher=fetch) -> list:
     data = json.loads(fetcher(EOL_API))
-    releases = data.get("releases", [])
+    releases = data.get("result", {}).get("releases", [])
     return [
-        build_entry(r["name"], r)
+        build_entry(r["name"], r, fetcher)
         for r in releases
         if r.get("name")
     ]
