@@ -34,7 +34,6 @@ jobs:
           add-paths: java/corretto.json
 
       - name: Enable auto-merge
-        if: false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
