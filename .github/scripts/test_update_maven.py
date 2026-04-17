@@ -48,12 +48,12 @@ class TestBuildEntry:
     def test_happy_path_3x(self):
         entry = build_entry("3.9.14", fetcher=lambda url: FAKE_SHA512)
         assert entry["version"] == "3.9.14"
-        assert "maven/maven-3/3.9.14/source/apache-maven-3.9.14-src.zip" in entry["url"]
+        assert "maven/maven-3/3.9.14/binaries/apache-maven-3.9.14-bin.zip" in entry["url"]
         assert entry["checksums"]["SHA-512"] == FAKE_SHA512
 
     def test_happy_path_4x(self):
         entry = build_entry("4.0.0", fetcher=lambda url: FAKE_SHA512)
-        assert "maven/maven-4/4.0.0/source/apache-maven-4.0.0-src.zip" in entry["url"]
+        assert "maven/maven-4/4.0.0/binaries/apache-maven-4.0.0-bin.zip" in entry["url"]
         assert entry["checksums"]["SHA-512"] == FAKE_SHA512
 
     def test_sha_url_is_zip_plus_sha512(self):
