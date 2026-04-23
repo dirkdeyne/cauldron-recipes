@@ -48,12 +48,14 @@ def build_entry(version: str, release: dict, fetcher=fetch) -> dict:
     return {
         "version": version,
         "url": zip_url,
+        
         # including null values
         # "checksums": {
         #     "MD5": None,
         #     "SHA-256": sha256,
         #     "SHA-512": None
         # }
+        
         # excluding null values
         "checksums": {
             "SHA-256": sha256
@@ -94,10 +96,7 @@ def run(fetcher=fetch) -> list:
     # Sort by major version for consistent output order
     for major in sorted(versions_map.keys(), key=int):
         release = versions_map[major]
-        tag = release["tag_name"]
-        version = tag.replace("jdk-", "")
-
-        entry = build_entry(version, release, fetcher)
+        entry = build_entry(major, release, fetcher)
         if entry:
             result.append(entry)
 
